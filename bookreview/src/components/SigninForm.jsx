@@ -1,97 +1,200 @@
 import React from "react";
-import { Col } from "antd";
+import { Input, Button, Divider, Col, message } from "antd";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+import * as axios from "axios";
+import { withRouter } from "react-router-dom";
 
-const Page = styled(Col)`
-  background-color: whiteSmoke;
-`;
-
-const Title = styled.div.attrs(() => ({
-  type: "flex",
-  align: "middle"
-}))`
-  font-size: 20px;
+const Title = styled.div`
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-transform: uppercase;
-  text-align: center;
-  margin-top: 50px;
+  font-family: Roboto;
+  font-size: 24px;
   font-weight: bold;
-`;
-
-const Idpass = styled.div`
-  margin-top: 30px;
-  margin-left: 45px;
-`;
-
-const Input = styled.input.attrs(() => ({
-  size: 40
-}))`
-  margin-top: 5px;
-  margin-left: 45px;
-  height: 40px;
-`;
-
-const SigninButton = styled.button`
-  margin-top: 20px;
-  margin-left: 45px;
-  background-color: #191970;
-  border: none;
-  color: white;
-  padding: 12px 32px;
+  margin-top: 60px;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
 `;
 
-const RecoveryButton = styled.button`
-  margin-left: 77px;
-  margin-bottom: 47px;
-  background-color: white;
-  color: #191970;
-  border: 2px solid #191970;
+const InputTitle = styled.div`
+  font-family: Roboto;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: ${props => props.top || "40"}px;
+  text-align: left;
+  padding-left: 40px;
 `;
 
-const OtherButton = styled.button`
-  margin-left: 77px;
-  background-color: white;
-  color: #191970;
-  border: 2px solid #191970;
+const InputArea = styled.div`
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
 
-const Underline = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  width: 300px;
+const StyledInput = styled(Input)`
+  width: 320px;
+  border-radius: 1px;
+  border-width: 1px;
+  font-family: Roboto;
+  margin-left: 40px;
+  margin-right: 40px;
+`;
+
+const ButtonArea = styled.div`
+  text-align: left;
+  padding-left: 40px;
+  margin-top: 20px;
+`;
+
+const StyledButton = styled(Button)`
+  border-color: #28546a;
+  background-color: #28546a;
+  text-transform: uppercase;
+  border-radius: 1px;
+  border-width: 2px;
+  color: white;
+  width: 120px;
+  &:hover {
+    background-color: #28546a;
+    color: white;
+  }
+`;
+
+const DividerArea = styled.div`
+  font-family: Roboto;
+  font-size: 12px;
+  font-weight: bold;
   margin-top: 30px;
-  border-bottom: 1px solid silver;
+  text-align: left;
+  padding-left: 40px;
+  padding-right: 40px;
 `;
 
-const Star = styled.span`
-  color: red;
+const LinkArea = styled.div`
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 15px;
+  overflow: hidden;
 `;
 
-export default function SigninForm() {
-  return (
-    <Page span={12}>
-      <Title>log in. start searching.</Title>
-      <Idpass>
-        Email<Star>*</Star>
-      </Idpass>
-      <Input placeholder="   email@email.com" />
-      <Idpass>
-        Password<Star>*</Star>
-      </Idpass>
-      <Input placeholder="   *****" />
-      <div>
-        <SigninButton>SIGN IN</SigninButton>
-      </div>
-      <Underline />
-      <Idpass>
-        Need to create account?<OtherButton>SIGN UP</OtherButton>
-      </Idpass>
-      <Idpass>
-        Forgot your password?<RecoveryButton>RECOVERY</RecoveryButton>
-      </Idpass>
-    </Page>
-  );
+const LinkTitle = styled.div`
+  float: left;
+  padding-top: 5px;
+`;
+
+const StyledSpan = styled.span.attrs(() => ({
+  children: "*"
+}))`
+  color: #971931;
+`;
+
+const LinkButtonArea = styled.div`
+  float: right;
+`;
+
+const LinkButton = styled(Button)`
+  background-color: #f3f7f8;
+  border-color: #28546a;
+  color: #28546a;
+  text-transform: uppercase;
+  border-radius: 1px;
+  border-width: 2px;
+  &:hover {
+    background-color: #28546a;
+    color: white;
+  }
+`;
+
+class SigninForm extends React.Component {
+  _emailInput = React.createRef();
+  _passwordInput = React.createRef();
+
+  state = {
+    loading: false
+  };
+
+  render() {
+    const { loading } = this.state;
+    return (
+      <Col
+        span={12}
+        style={{
+          verticalAlign: "top"
+        }}
+      >
+        <Title>Log In. Start Searching.</Title>
+        <InputTitle>
+          Email
+          <StyledSpan />
+        </InputTitle>
+        <InputArea>
+          <StyledInput placeholder="Email" ref={this._emailInput} />
+        </InputArea>
+        <InputTitle top={10}>
+          Password
+          <StyledSpan />
+        </InputTitle>
+        <InputArea>
+          <StyledInput type="password" ref={this._passwordInput} />
+        </InputArea>
+        <ButtonArea>
+          <StyledButton size="large" loading={loading} onClick={this._click}>
+            Sign In
+          </StyledButton>
+        </ButtonArea>
+        <DividerArea>
+          <Divider />
+        </DividerArea>
+        <LinkArea>
+          <LinkTitle>Need to create an account?</LinkTitle>
+          <LinkButtonArea>
+            <Link to="/signup">
+              <LinkButton>Sign up</LinkButton>
+            </Link>
+          </LinkButtonArea>
+        </LinkArea>
+        <LinkArea>
+          <LinkTitle>Forgot your password?</LinkTitle>
+          <LinkButtonArea>
+            <Link to="/forgot">
+              <LinkButton>Recovery</LinkButton>
+            </Link>
+          </LinkButtonArea>
+        </LinkArea>
+      </Col>
+    );
+  }
+
+  _click = async () => {
+    const { history } = this.props;
+    const email = this._emailInput.current.state.value;
+    const password = this._passwordInput.current.state.value;
+    if (email === "" || password === "") {
+      message.error("This is an error message");
+      this._emailInput.current.focus();
+      return;
+    }
+
+    this.setState({
+      loading: true
+    });
+
+    try {
+      const response = await axios.post("https://api.marktube.tv/v1/me", {
+        email,
+        password
+      });
+      const token = response.data.token;
+      console.log(token);
+      localStorage.setItem("token", token);
+      history.push("/");
+    } catch (error) {
+      console.log(error.response.data.error);
+      message.error(error.response.data.error);
+      this.setState({
+        loading: false
+      });
+    }
+  };
 }
+
+export default withRouter(SigninForm);
